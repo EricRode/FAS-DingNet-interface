@@ -18,7 +18,7 @@ public class MoteStateMapper {
                 .collect(Collectors.toList());
     }
 
-    private static MoteState mapMoteToMoteState(Mote mote, int simpleId) {
+    private static MoteState mapMoteToMoteState(Mote mote, int id) {
         Double shortestDistanceToGateway = mote.getShortestDistanceToGateway();
         if (shortestDistanceToGateway == null) {
             shortestDistanceToGateway = moteProbe.getShortestDistanceToGateway(mote);
@@ -36,7 +36,7 @@ public class MoteStateMapper {
 
         return MoteState.builder()
                 .EUI(mote.getEUI())
-                .simpleId(simpleId)
+                .id(id)
                 .transmissionPower(mote.getTransmissionPower())
                 .shortestDistanceToGateway(shortestDistanceToGateway)
                 .highestReceivedSignal(highestReceivedSignal)

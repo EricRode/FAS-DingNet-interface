@@ -27,7 +27,7 @@ public class MoteState {
      * The index of the mote in the current environment configuration.
      * @since 1.0
      */
-    private Integer simpleId;
+    private Integer id;
 
     /**
      * The x-coordinate of the mote.
