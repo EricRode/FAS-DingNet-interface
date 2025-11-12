@@ -7,17 +7,18 @@ import models.MoteState;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class MoteStateMapper {
     private static final MoteProbe moteProbe = new MoteProbe();
 
     public static List<MoteState> mapMoteListToMoteStateList(LinkedList<Mote> motes) {
-        return motes.stream()
-                .map(MoteStateMapper::mapMoteToMoteState)
+        return IntStream.range(0, motes.size())
+                .mapToObj(index -> mapMoteToMoteState(motes.get(index), index))
                 .collect(Collectors.toList());
     }
 
-    public static MoteState mapMoteToMoteState(Mote mote) {
+    private static MoteState mapMoteToMoteState(Mote mote, int simpleId) {
         Double shortestDistanceToGateway = mote.getShortestDistanceToGateway();
         if (shortestDistanceToGateway == null) {
             shortestDistanceToGateway = moteProbe.getShortestDistanceToGateway(mote);
@@ -35,6 +36,7 @@ public class MoteStateMapper {
 
         return MoteState.builder()
                 .EUI(mote.getEUI())
+                .simpleId(simpleId)
                 .transmissionPower(mote.getTransmissionPower())
                 .shortestDistanceToGateway(shortestDistanceToGateway)
                 .highestReceivedSignal(highestReceivedSignal)
@@ -42,6 +44,7 @@ public class MoteStateMapper {
                 .XPos(mote.getXPos())
                 .YPos(mote.getYPos())
                 .energyLevel(mote.getEnergyLevel())
+                .totalEnergyConsumed(calculateTotalEnergyConsumption(mote))
                 .movementSpeed(mote.getMovementSpeed())
                 .samplingRate(mote.getSamplingRate())
                 .sensors(mote.getSensors())
@@ -50,5 +53,22 @@ public class MoteStateMapper {
                 .packetsSent(mote.getNumberOfSentPackets())
                 .packetsLost(mote.getNumberOfLostPackets())
                 .build();
+    }
+
+    private static Double calculateTotalEnergyConsumption(Mote mote) {
+        if (mote == null || mote.getEnvironment() == null) {
+            return 0.0;
+        }
+
+        Integer numberOfRuns = mote.getEnvironment().getNumberOfRuns();
+        if (numberOfRuns == null || numberOfRuns <= 0) {
+            return 0.0;
+        }
+
+        int currentRunIndex = numberOfRuns - 1;
+        LinkedList<Double> usedEnergy = mote.getUsedEnergy(currentRunIndex);
+        return usedEnergy.stream()
+                .mapToDouble(Double::doubleValue)
+                .sum();
     }
 }
