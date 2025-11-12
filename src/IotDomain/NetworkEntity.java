@@ -70,6 +70,16 @@ public abstract class NetworkEntity implements Serializable{
     private LinkedList<LinkedList<LoraTransmission>> sentTransmissions = new LinkedList<>();
 
     /**
+     * Stores the per-transmission energy usage history for each run.
+     */
+    private LinkedList<LinkedList<Double>> usedEnergyHistory;
+
+    /**
+     * Stores the cumulative energy usage for each run.
+     */
+    private LinkedList<Double> totalEnergyConsumedPerRun;
+
+    /**
      * If the mote is enabled in the current simulation.
      */
     private Boolean enabled;
@@ -117,6 +127,10 @@ public abstract class NetworkEntity implements Serializable{
         spreadingFactorHistory.add(new LinkedList<>());
         receivedTransmissions.add(new LinkedHashMap<>());
         sentTransmissions.add(new LinkedList<>());
+        usedEnergyHistory = new LinkedList<>();
+        usedEnergyHistory.add(new LinkedList<>());
+        totalEnergyConsumedPerRun = new LinkedList<>();
+        totalEnergyConsumedPerRun.add(0.0);
         isTransmitting =false;
         enabled = true;
     }
@@ -450,19 +464,70 @@ public abstract class NetworkEntity implements Serializable{
     }
 
     public LinkedList<Double> getUsedEnergy(Integer run){
-        LinkedList<Double> usedEnergy = new LinkedList<>();
-        int i= 0;
-        for(LoraTransmission transmission: getSentTransmissions(run)){
-            usedEnergy.add(calculateEnergyUsage(getPowerSettingHistory(run).get(i).getRight(), transmission.getTimeOnAir()));
-            i++;
+        ensureEnergyHistoryInitialized();
+
+        if (run == null || run < 0 || run >= usedEnergyHistory.size()) {
+            return new LinkedList<>();
         }
-        return usedEnergy;
+
+        return new LinkedList<>(usedEnergyHistory.get(run));
+    }
+
+    protected void recordEnergyUsage(int runIndex, double consumedEnergy) {
+        if (runIndex < 0 || consumedEnergy <= 0) {
+            return;
+        }
+
+        ensureEnergyHistoryInitialized();
+        ensureEnergyHistoryCapacity(runIndex);
+
+        usedEnergyHistory.get(runIndex).add(consumedEnergy);
+        totalEnergyConsumedPerRun.set(runIndex, totalEnergyConsumedPerRun.get(runIndex) + consumedEnergy);
+    }
+
+    public double getTotalUsedEnergy(int runIndex) {
+        ensureEnergyHistoryInitialized();
+
+        if (runIndex < 0 || runIndex >= totalEnergyConsumedPerRun.size()) {
+            return 0.0;
+        }
+
+        return totalEnergyConsumedPerRun.get(runIndex);
+    }
+
+    private void ensureEnergyHistoryCapacity(int runIndex) {
+        ensureEnergyHistoryInitialized();
+
+        while (runIndex >= usedEnergyHistory.size()) {
+            usedEnergyHistory.add(new LinkedList<>());
+        }
+
+        while (runIndex >= totalEnergyConsumedPerRun.size()) {
+            totalEnergyConsumedPerRun.add(0.0);
+        }
+    }
+
+    private void ensureEnergyHistoryInitialized() {
+        if (usedEnergyHistory == null) {
+            usedEnergyHistory = new LinkedList<>();
+        }
+        if (usedEnergyHistory.isEmpty()) {
+            usedEnergyHistory.add(new LinkedList<>());
+        }
+
+        if (totalEnergyConsumedPerRun == null) {
+            totalEnergyConsumedPerRun = new LinkedList<>();
+        }
+        if (totalEnergyConsumedPerRun.isEmpty()) {
+            totalEnergyConsumedPerRun.add(0.0);
+        }
     }
 
     /**
      * Resets the received and sent transmissions and the power setting and the spreading factor history of the entity.
      */
     public void reset(){
+        ensureEnergyHistoryInitialized();
         powerSettingHistory.clear();
         powerSettingHistory.add(new LinkedList<>());
         spreadingFactorHistory.clear();
@@ -471,16 +536,23 @@ public abstract class NetworkEntity implements Serializable{
         receivedTransmissions.add(new LinkedHashMap<>());
         sentTransmissions.clear();
         sentTransmissions.add(new LinkedList<>());
+        usedEnergyHistory.clear();
+        usedEnergyHistory.add(new LinkedList<>());
+        totalEnergyConsumedPerRun.clear();
+        totalEnergyConsumedPerRun.add(0.0);
     }
 
     /**
      * Adds a new list to the received and sent transmissions and the power setting and the spreading factor history of the entity.
      */
     public void addRun(){
+        ensureEnergyHistoryInitialized();
         powerSettingHistory.add(new LinkedList<>());
         spreadingFactorHistory.add(new LinkedList<>());
         receivedTransmissions.add(new LinkedHashMap<>());
         sentTransmissions.add(new LinkedList<>());
+        usedEnergyHistory.add(new LinkedList<>());
+        totalEnergyConsumedPerRun.add(0.0);
     }
 
     /**

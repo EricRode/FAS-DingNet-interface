@@ -66,9 +66,6 @@ public class MoteStateMapper {
         }
 
         int currentRunIndex = numberOfRuns - 1;
-        LinkedList<Double> usedEnergy = mote.getUsedEnergy(currentRunIndex);
-        return usedEnergy.stream()
-                .mapToDouble(Double::doubleValue)
-                .sum();
+        return mote.getTotalUsedEnergy(currentRunIndex);
     }
 }

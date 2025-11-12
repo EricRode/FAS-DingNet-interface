@@ -192,10 +192,6 @@ public class Mote extends NetworkEntity {
     }
 
     private void applyEnergyConsumptionForNewTransmissions(int runIndex, int transmissionsBeforeSend) {
-        if (getEnergyLevel() == null) {
-            return;
-        }
-
         LinkedList<LoraTransmission> sentTransmissionsForRun = getSentTransmissions(runIndex);
         if (sentTransmissionsForRun.size() <= transmissionsBeforeSend) {
             return;
@@ -211,7 +207,10 @@ public class Mote extends NetworkEntity {
             LoraTransmission transmission = sentTransmissionsForRun.get(index);
             Pair<Integer, Integer> powerEntry = powerHistory.get(index);
             double consumedEnergy = calculateEnergyUsage(powerEntry.getRight(), transmission.getTimeOnAir());
-            decreaseEnergyLevel(consumedEnergy);
+            recordEnergyUsage(runIndex, consumedEnergy);
+            if (getEnergyLevel() != null) {
+                decreaseEnergyLevel(consumedEnergy);
+            }
         }
     }
 

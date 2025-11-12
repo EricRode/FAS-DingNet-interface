@@ -117,7 +117,7 @@ public class MoteEnergyUsageHandler implements HttpHandler {
         }
 
         LinkedList<Double> usedEnergy = mote.getUsedEnergy(runIndex);
-        double totalEnergy = usedEnergy.stream().mapToDouble(Double::doubleValue).sum();
+        double totalEnergy = mote.getTotalUsedEnergy(runIndex);
 
         MoteEnergyUsageModel model = MoteEnergyUsageModel.builder()
                 .EUI(mote.getEUI())
