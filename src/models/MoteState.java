@@ -24,6 +24,12 @@ public class MoteState {
     private Long EUI;
 
     /**
+     * The index of the mote in the current environment configuration.
+     * @since 1.0
+     */
+    private Integer id;
+
+    /**
      * The x-coordinate of the mote.
      * @since 1.0
      */
@@ -58,6 +64,12 @@ public class MoteState {
      * @since 1.0
      */
     private Integer energyLevel;
+
+    /**
+     * The total amount of energy the mote has consumed in the current run.
+     * @since 1.0
+     */
+    private Double totalEnergyConsumed;
 
     /**
      * The sampling rate of the mote.
