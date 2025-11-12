@@ -60,6 +60,8 @@ public class HTTPServer {
         server.createContext("/start_run", new StartRunHandler(simulationState));
         server.createContext("/stop_run", new StopRunHandler(simulationState));
 
+        server.createContext("/mote_energy_usage", new MoteEnergyUsageHandler(simulationState));
+
         server.start();
     }
 }

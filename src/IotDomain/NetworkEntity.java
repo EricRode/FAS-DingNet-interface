@@ -441,11 +441,19 @@ public abstract class NetworkEntity implements Serializable{
         return EUI;
     }
 
+    protected double calculateEnergyUsage(Integer transmissionPower, Double timeOnAir) {
+        if (transmissionPower == null || timeOnAir == null) {
+            return 0.0;
+        }
+
+        return Math.pow(10, ((double) transmissionPower) / 10) * timeOnAir / 1000;
+    }
+
     public LinkedList<Double> getUsedEnergy(Integer run){
         LinkedList<Double> usedEnergy = new LinkedList<>();
         int i= 0;
         for(LoraTransmission transmission: getSentTransmissions(run)){
-            usedEnergy.add(Math.pow(10,((double)getPowerSettingHistory(run).get(i).getRight())/10)*transmission.getTimeOnAir()/1000);
+            usedEnergy.add(calculateEnergyUsage(getPowerSettingHistory(run).get(i).getRight(), transmission.getTimeOnAir()));
             i++;
         }
         return usedEnergy;

@@ -27,6 +27,7 @@ src/models/ExecuteModel.java
 src/models/AdaptationOptionModel.java
 src/models/MonitorModel.java
 src/models/AdaptationOptionsDTO.java
+src/models/MoteEnergyUsageModel.java
 src/IotDomain/NetworkEntity.java
 src/IotDomain/LoraWanPacket.java
 src/IotDomain/Environment.java
@@ -53,6 +54,7 @@ src/HTTP/AdaptationOptionsHandler.java
 src/HTTP/ExecuteHandler.java
 src/HTTP/MonitorHandler.java
 src/HTTP/MonitorSchemaHandler.java
+src/HTTP/MoteEnergyUsageHandler.java
 src/HTTP/HTTPResponse.java
 src/GUI/NewGatewayGUI.java
 src/GUI/NewMoteGUI.java

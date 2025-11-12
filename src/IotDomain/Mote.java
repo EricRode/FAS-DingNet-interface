@@ -7,6 +7,7 @@ import org.jxmapviewer.viewer.GeoPosition;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 
@@ -39,6 +40,11 @@ public class Mote extends NetworkEntity {
      */
 
     private Integer energyLevel;
+
+    /**
+     * Accumulates fractional energy usage until a full energy unit can be deducted from the mote.
+     */
+    private double energyConsumptionBuffer = 0.0;
     /**
      * An integer representing the sampling rate of the mote.
      */
@@ -171,6 +177,60 @@ public class Mote extends NetworkEntity {
         loraSend(packet);
     }
 
+    @Override
+    protected void loraSend(LoraWanPacket message){
+        int runIndex = 0;
+        if (getEnvironment() != null && getEnvironment().getNumberOfRuns() > 0) {
+            runIndex = getEnvironment().getNumberOfRuns() - 1;
+        }
+
+        int transmissionsBeforeSend = getSentTransmissions(runIndex).size();
+
+        super.loraSend(message);
+
+        applyEnergyConsumptionForNewTransmissions(runIndex, transmissionsBeforeSend);
+    }
+
+    private void applyEnergyConsumptionForNewTransmissions(int runIndex, int transmissionsBeforeSend) {
+        if (getEnergyLevel() == null) {
+            return;
+        }
+
+        LinkedList<LoraTransmission> sentTransmissionsForRun = getSentTransmissions(runIndex);
+        if (sentTransmissionsForRun.size() <= transmissionsBeforeSend) {
+            return;
+        }
+
+        List<Pair<Integer, Integer>> powerHistory = getPowerSettingHistory(runIndex);
+
+        for (int index = transmissionsBeforeSend; index < sentTransmissionsForRun.size(); index++) {
+            if (index >= powerHistory.size()) {
+                break;
+            }
+
+            LoraTransmission transmission = sentTransmissionsForRun.get(index);
+            Pair<Integer, Integer> powerEntry = powerHistory.get(index);
+            double consumedEnergy = calculateEnergyUsage(powerEntry.getRight(), transmission.getTimeOnAir());
+            decreaseEnergyLevel(consumedEnergy);
+        }
+    }
+
+    private void decreaseEnergyLevel(double consumedEnergy) {
+        if (consumedEnergy <= 0) {
+            return;
+        }
+
+        energyConsumptionBuffer += consumedEnergy;
+
+        int wholeUnitsToConsume = (int) Math.floor(energyConsumptionBuffer);
+        if (wholeUnitsToConsume <= 0) {
+            return;
+        }
+
+        energyLevel = Math.max(0, energyLevel - wholeUnitsToConsume);
+        energyConsumptionBuffer -= wholeUnitsToConsume;
+    }
+
     /**
      * Returns the energy level of the mote.
      * @return The energy level of the mote.
@@ -289,6 +349,12 @@ public class Mote extends NetworkEntity {
     @Getter
     @Setter
     private Double packetLoss;
+
+    @Override
+    public void reset(){
+        super.reset();
+        energyConsumptionBuffer = 0.0;
+    }
 
     public Double calculatePacketLoss(Integer run) {
         int receivedPackets = 0;
