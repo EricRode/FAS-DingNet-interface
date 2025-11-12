@@ -27,10 +27,12 @@ public class MonitorModel {
     /**
      * A list of MoteStates.
      */
+    @Builder.Default
     private List<MoteState> moteStates = new ArrayList<>();
 
     /**
      * A list of GatewayStates
      */
+    @Builder.Default
     private List<GatewayState> gatewayStates = new ArrayList<>();
 }

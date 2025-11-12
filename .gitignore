@@ -1,3 +1,4 @@
 out/
 .idea/
-.build-tmp/
+.vscode
+build-tmp/
