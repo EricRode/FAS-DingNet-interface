@@ -170,7 +170,6 @@ public class MainSimulation extends Thread {
         Mote mote2 = environment.getMotes().get(2);
 
         LinkedList<GeoPosition> track0 = mote0.getPath();
-        LinkedList<GeoPosition> track1 = mote1.getPath();
         LinkedList<GeoPosition> track2 = mote2.getPath();
 
         this.simulationState.setEnvironment(environment);
@@ -181,7 +180,8 @@ public class MainSimulation extends Thread {
         Random random = new Random();
         LinkedList<Integer> powerSetting0 = new LinkedList<>();
         LinkedList<LoraTransmission> highestPower0 = new LinkedList<>();
-        int mote0Counter = 9;
+        int mote0Counter = mote0.getSamplingRate() - 1;
+        int mote1Counter = mote1.getSamplingRate() - 1;
         Integer mote2counter = random.nextInt(15)+1;
         LinkedList<Integer> indexesMote2 = new LinkedList<>();
         indexesMote2.add(mote2counter);
@@ -199,10 +199,8 @@ public class MainSimulation extends Thread {
                         highestPower0.add(naiveAdaptionAlgorithm(mote0));
                     }
 
-                    mote0.setHighestReceivedSignal(moteProbe.getHighestReceivedSignal(mote0));
-                    mote0.setShortestDistanceToGateway(moteProbe.getShortestDistanceToGateway(mote0));
-                    mote0.setPacketLoss(mote2.calculatePacketLoss(environment.getNumberOfRuns() - 1));
-                    mote0Counter = 9;
+                    updateMoteStatistics(mote0, environment);
+                    mote0Counter = mote0.getSamplingRate() - 1;
                 }
                 else
                     mote0Counter --;
@@ -211,14 +209,22 @@ public class MainSimulation extends Thread {
                 trackPosition0++;
             }
 
+            if (mote1Counter == 0) {
+                mote1.sendToGateWay(new Byte[0], new HashMap<>());
+
+                updateMoteStatistics(mote1, environment);
+
+                mote1Counter = mote1.getSamplingRate() - 1;
+            } else {
+                mote1Counter--;
+            }
+
             // Update the position of mote2
             if (moveMote(track2.get(trackPosition2 % track2.size()), mote2, mapzero)) {
                 if (mote2counter == 0) {
                     mote2.sendToGateWay(new Byte[0], new HashMap<>());
 
-                    mote2.setHighestReceivedSignal(moteProbe.getHighestReceivedSignal(mote2));
-                    mote2.setShortestDistanceToGateway(moteProbe.getShortestDistanceToGateway(mote2));
-                    mote2.setPacketLoss(mote2.calculatePacketLoss(environment.getNumberOfRuns() - 1));
+                    updateMoteStatistics(mote2, environment);
 
                     mote2counter = random.nextInt(15) + 1;
                     indexesMote2.add(indexesMote2.getLast() + mote2counter);
@@ -234,6 +240,12 @@ public class MainSimulation extends Thread {
 
         if (visualizeResults)
             showCharts(environment, indexesMote2);
+    }
+
+    private void updateMoteStatistics(Mote mote, Environment environment) {
+        mote.setHighestReceivedSignal(moteProbe.getHighestReceivedSignal(mote));
+        mote.setShortestDistanceToGateway(moteProbe.getShortestDistanceToGateway(mote));
+        mote.setPacketLoss(mote.calculatePacketLoss(environment.getNumberOfRuns() - 1));
     }
 
     private static void showCharts(Environment environment, List<Integer> indexesMote2) {
