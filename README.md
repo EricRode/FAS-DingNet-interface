@@ -25,3 +25,6 @@ Note: If no port is specified in the environment variables (-e argument), port 8
 - Access the HTTP server on port 3000 (or the port you specified).
 - After making a request to the `/start_run` endpoint, the simulation will start.
 - You can access the GUI of the simulation by opening a web-browser and connecting to `localhost:6901`. The username is 'kasm_user' and the password is 'password'.
+
+### HTTP API
+- See [HTTP API Reference](docs/HTTP_API.md) for detailed documentation of the available endpoints, including payload schemas and error responses.
