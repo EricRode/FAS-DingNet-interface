@@ -108,6 +108,12 @@ public class MoteState {
     private Double packetLoss;
 
     /**
+     * The recent packet loss of the mote over a sliding window of transmissions.
+     * @since 1.1
+     */
+    private Double recentPacketLoss;
+
+    /**
      * The number of packets sent by the mote.
      * @since 1.0
      */

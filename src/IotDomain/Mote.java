@@ -6,9 +6,11 @@ import lombok.Setter;
 import org.jxmapviewer.viewer.GeoPosition;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 
 /**
@@ -381,5 +383,56 @@ public class Mote extends NetworkEntity {
         this.numberOfLostPackets = numberOfSentPackets - receivedPackets;
 
         return (numberOfSentPackets - receivedPackets) / (double) numberOfSentPackets;
+    }
+
+    /**
+     * Calculates the packet loss for the most recent transmissions of the mote in the given run.
+     *
+     * @param run        the run index to inspect.
+     * @param windowSize number of recent transmissions to include in the calculation.
+     * @return packet loss ratio for the selected window, or 0 when insufficient data is available.
+     */
+    public Double calculateRecentPacketLoss(Integer run, int windowSize) {
+        if (run == null || windowSize <= 0 || getEnvironment() == null) {
+            return 0D;
+        }
+
+        LinkedList<LoraTransmission> sentTransmissions = getSentTransmissions(run);
+        if (sentTransmissions == null || sentTransmissions.isEmpty()) {
+            return 0D;
+        }
+
+        int fromIndex = Math.max(0, sentTransmissions.size() - windowSize);
+        List<LoraTransmission> recentTransmissions = sentTransmissions.subList(fromIndex, sentTransmissions.size());
+        if (recentTransmissions.isEmpty()) {
+            return 0D;
+        }
+
+        Set<LoraTransmission> successfullyReceived = new HashSet<>();
+
+        for (Gateway gateway : getEnvironment().getGateways()) {
+            for (LoraTransmission receivedTransmission : gateway.getReceivedTransmissions(run)) {
+                if (receivedTransmission.getSender() == this) {
+                    successfullyReceived.add(receivedTransmission);
+                }
+            }
+        }
+
+        for (Mote mote : getEnvironment().getMotes()) {
+            for (LoraTransmission receivedTransmission : mote.getReceivedTransmissions(run)) {
+                if (receivedTransmission.getSender() == this) {
+                    successfullyReceived.add(receivedTransmission);
+                }
+            }
+        }
+
+        int receivedPackets = 0;
+        for (LoraTransmission transmission : recentTransmissions) {
+            if (successfullyReceived.contains(transmission)) {
+                receivedPackets++;
+            }
+        }
+
+        return (recentTransmissions.size() - receivedPackets) / (double) recentTransmissions.size();
     }
 }
