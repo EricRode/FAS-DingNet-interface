@@ -5,12 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jxmapviewer.viewer.GeoPosition;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 
 /**
@@ -402,37 +402,69 @@ public class Mote extends NetworkEntity {
             return 0D;
         }
 
-        int fromIndex = Math.max(0, sentTransmissions.size() - windowSize);
-        List<LoraTransmission> recentTransmissions = sentTransmissions.subList(fromIndex, sentTransmissions.size());
-        if (recentTransmissions.isEmpty()) {
+        int transmissionsToInspect = Math.min(windowSize, sentTransmissions.size());
+        if (transmissionsToInspect <= 0) {
             return 0D;
         }
 
-        Set<LoraTransmission> successfullyReceived = new HashSet<>();
+        List<Map<LoraTransmission, Boolean>> receivedTransmissionMaps = collectReceivedTransmissionMaps(run);
 
-        for (Gateway gateway : getEnvironment().getGateways()) {
-            for (LoraTransmission receivedTransmission : gateway.getReceivedTransmissions(run)) {
-                if (receivedTransmission.getSender() == this) {
-                    successfullyReceived.add(receivedTransmission);
+        int successfulPackets = 0;
+        for (int i = sentTransmissions.size() - 1, inspected = 0; i >= 0 && inspected < transmissionsToInspect; i--, inspected++) {
+            LoraTransmission transmission = sentTransmissions.get(i);
+            if (wasSuccessfullyReceived(transmission, receivedTransmissionMaps)) {
+                successfulPackets++;
+            }
+        }
+
+        return (transmissionsToInspect - successfulPackets) / (double) transmissionsToInspect;
+    }
+
+    private List<Map<LoraTransmission, Boolean>> collectReceivedTransmissionMaps(Integer run) {
+        List<Map<LoraTransmission, Boolean>> receivedTransmissionMaps = new ArrayList<>();
+
+        Environment environment = getEnvironment();
+        if (environment == null) {
+            return receivedTransmissionMaps;
+        }
+
+        if (environment.getGateways() != null) {
+            for (Gateway gateway : environment.getGateways()) {
+                Map<LoraTransmission, Boolean> transmissions = gateway.getAllReceivedTransmissions(run);
+                if (transmissions != null && !transmissions.isEmpty()) {
+                    receivedTransmissionMaps.add(transmissions);
                 }
             }
         }
 
-        for (Mote mote : getEnvironment().getMotes()) {
-            for (LoraTransmission receivedTransmission : mote.getReceivedTransmissions(run)) {
-                if (receivedTransmission.getSender() == this) {
-                    successfullyReceived.add(receivedTransmission);
+        if (environment.getMotes() != null) {
+            for (Mote mote : environment.getMotes()) {
+                if (mote == null || mote == this) {
+                    continue;
+                }
+
+                Map<LoraTransmission, Boolean> transmissions = mote.getAllReceivedTransmissions(run);
+                if (transmissions != null && !transmissions.isEmpty()) {
+                    receivedTransmissionMaps.add(transmissions);
                 }
             }
         }
 
-        int receivedPackets = 0;
-        for (LoraTransmission transmission : recentTransmissions) {
-            if (successfullyReceived.contains(transmission)) {
-                receivedPackets++;
+        return receivedTransmissionMaps;
+    }
+
+    private boolean wasSuccessfullyReceived(LoraTransmission transmission, List<Map<LoraTransmission, Boolean>> receivedTransmissionMaps) {
+        if (transmission == null || receivedTransmissionMaps.isEmpty()) {
+            return false;
+        }
+
+        for (Map<LoraTransmission, Boolean> transmissions : receivedTransmissionMaps) {
+            Boolean collision = transmissions.get(transmission);
+            if (collision != null && !collision) {
+                return true;
             }
         }
 
-        return (recentTransmissions.size() - receivedPackets) / (double) recentTransmissions.size();
+        return false;
     }
 }
