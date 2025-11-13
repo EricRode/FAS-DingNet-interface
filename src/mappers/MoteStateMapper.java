@@ -11,6 +11,11 @@ import java.util.stream.IntStream;
 
 public class MoteStateMapper {
     private static final MoteProbe moteProbe = new MoteProbe();
+    /**
+     * Number of most recent transmissions to consider when calculating recent packet loss.
+     * Roughly corresponds to 5 minutes of simulated time for regularly reporting motes.
+     */
+    private static final int RECENT_PACKET_WINDOW_SIZE = 30;
 
     public static List<MoteState> mapMoteListToMoteStateList(LinkedList<Mote> motes) {
         return IntStream.range(0, motes.size())
@@ -30,8 +35,21 @@ public class MoteStateMapper {
         }
 
         Double packetLoss = mote.getPacketLoss();
-        if (packetLoss == null) {
-            packetLoss = mote.calculatePacketLoss(mote.getEnvironment().getNumberOfRuns() - 1);
+        Double recentPacketLoss = null;
+
+        Integer runIndex = null;
+        if (mote.getEnvironment() != null) {
+            Integer numberOfRuns = mote.getEnvironment().getNumberOfRuns();
+            if (numberOfRuns != null && numberOfRuns > 0) {
+                runIndex = numberOfRuns - 1;
+            }
+        }
+
+        if (runIndex != null) {
+            if (packetLoss == null) {
+                packetLoss = mote.calculatePacketLoss(runIndex);
+            }
+            recentPacketLoss = mote.calculateRecentPacketLoss(runIndex, RECENT_PACKET_WINDOW_SIZE);
         }
 
         return MoteState.builder()
@@ -50,6 +68,7 @@ public class MoteStateMapper {
                 .sensors(mote.getSensors())
                 .startOffSet(mote.getStartOffset())
                 .packetLoss(packetLoss)
+                .recentPacketLoss(recentPacketLoss)
                 .packetsSent(mote.getNumberOfSentPackets())
                 .packetsLost(mote.getNumberOfLostPackets())
                 .build();

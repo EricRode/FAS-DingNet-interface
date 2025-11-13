@@ -5,9 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jxmapviewer.viewer.GeoPosition;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 
@@ -381,5 +383,88 @@ public class Mote extends NetworkEntity {
         this.numberOfLostPackets = numberOfSentPackets - receivedPackets;
 
         return (numberOfSentPackets - receivedPackets) / (double) numberOfSentPackets;
+    }
+
+    /**
+     * Calculates the packet loss for the most recent transmissions of the mote in the given run.
+     *
+     * @param run        the run index to inspect.
+     * @param windowSize number of recent transmissions to include in the calculation.
+     * @return packet loss ratio for the selected window, or 0 when insufficient data is available.
+     */
+    public Double calculateRecentPacketLoss(Integer run, int windowSize) {
+        if (run == null || windowSize <= 0 || getEnvironment() == null) {
+            return 0D;
+        }
+
+        LinkedList<LoraTransmission> sentTransmissions = getSentTransmissions(run);
+        if (sentTransmissions == null || sentTransmissions.isEmpty()) {
+            return 0D;
+        }
+
+        int transmissionsToInspect = Math.min(windowSize, sentTransmissions.size());
+        if (transmissionsToInspect <= 0) {
+            return 0D;
+        }
+
+        List<Map<LoraTransmission, Boolean>> receivedTransmissionMaps = collectReceivedTransmissionMaps(run);
+
+        int successfulPackets = 0;
+        for (int i = sentTransmissions.size() - 1, inspected = 0; i >= 0 && inspected < transmissionsToInspect; i--, inspected++) {
+            LoraTransmission transmission = sentTransmissions.get(i);
+            if (wasSuccessfullyReceived(transmission, receivedTransmissionMaps)) {
+                successfulPackets++;
+            }
+        }
+
+        return (transmissionsToInspect - successfulPackets) / (double) transmissionsToInspect;
+    }
+
+    private List<Map<LoraTransmission, Boolean>> collectReceivedTransmissionMaps(Integer run) {
+        List<Map<LoraTransmission, Boolean>> receivedTransmissionMaps = new ArrayList<>();
+
+        Environment environment = getEnvironment();
+        if (environment == null) {
+            return receivedTransmissionMaps;
+        }
+
+        if (environment.getGateways() != null) {
+            for (Gateway gateway : environment.getGateways()) {
+                Map<LoraTransmission, Boolean> transmissions = gateway.getAllReceivedTransmissions(run);
+                if (transmissions != null && !transmissions.isEmpty()) {
+                    receivedTransmissionMaps.add(transmissions);
+                }
+            }
+        }
+
+        if (environment.getMotes() != null) {
+            for (Mote mote : environment.getMotes()) {
+                if (mote == null || mote == this) {
+                    continue;
+                }
+
+                Map<LoraTransmission, Boolean> transmissions = mote.getAllReceivedTransmissions(run);
+                if (transmissions != null && !transmissions.isEmpty()) {
+                    receivedTransmissionMaps.add(transmissions);
+                }
+            }
+        }
+
+        return receivedTransmissionMaps;
+    }
+
+    private boolean wasSuccessfullyReceived(LoraTransmission transmission, List<Map<LoraTransmission, Boolean>> receivedTransmissionMaps) {
+        if (transmission == null || receivedTransmissionMaps.isEmpty()) {
+            return false;
+        }
+
+        for (Map<LoraTransmission, Boolean> transmissions : receivedTransmissionMaps) {
+            Boolean collision = transmissions.get(transmission);
+            if (collision != null && !collision) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
