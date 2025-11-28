@@ -16,6 +16,7 @@ public class HTTPServer {
 
     /**
      * Returns the port number of the HTTP server as a string.
+     * 
      * @return Port number.
      */
     private static int getPort() {
@@ -26,9 +27,10 @@ public class HTTPServer {
 
     /**
      * Creates an HTTP server and returns it.
+     * 
      * @return HTTPServer.
      */
-    private static HttpServer createServer()  {
+    private static HttpServer createServer() {
         try {
             return HttpServer.create(new InetSocketAddress(getPort()), 1024);
         } catch (IOException e) {
@@ -37,10 +39,12 @@ public class HTTPServer {
     }
 
     /**
-     * Creates the necessary HTTPContext for all the endpoints in DingNet and starts the HTTP server.
+     * Creates the necessary HTTPContext for all the endpoints in DingNet and starts
+     * the HTTP server.
+     * 
      * @param args contains command line arguments.
      */
-    public static void main(String[] args)  {
+    public static void main(String[] args) {
         HttpServer server = createServer();
         SimulationState simulationState = new SimulationState();
 
@@ -61,6 +65,8 @@ public class HTTPServer {
         server.createContext("/stop_run", new StopRunHandler(simulationState));
 
         server.createContext("/mote_energy_usage", new MoteEnergyUsageHandler(simulationState));
+        server.createContext("/status", new StatusHandler(simulationState));
+        server.createContext("/configure_scenario", new ConfigureScenarioHandler(simulationState));
 
         server.start();
     }

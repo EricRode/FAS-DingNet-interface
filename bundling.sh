@@ -2,6 +2,12 @@
 set -euo pipefail
 
 # --- COMPILE SOURCES FIRST ---
+echo "Finding source files..."
+find src -name "*.java" \
+  -not -path "*/test/*" \
+  -not -path "*/javadoc/*" \
+  > sources.txt
+
 /opt/homebrew/opt/java11/libexec/openjdk.jdk/Contents/Home/bin/javac \
   -cp "lib/*" \
   -d out/classes \

@@ -5,7 +5,8 @@ import lombok.*;
 
 /**
  * The Class responsible for storing the state of the simulation in DingNet.
- * Only non-null values are included when an instance of this class is mapped to JSON.
+ * Only non-null values are included when an instance of this class is mapped to
+ * JSON.
  */
 @Data
 @NoArgsConstructor

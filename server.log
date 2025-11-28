@@ -1,0 +1,121 @@
+Server running on port 3000
+[ConfigureScenario] Received configuration. Mode: null
+[ConfigureScenario] numMotes: 5
+[ConfigureScenario] numGateways: 2
+[StartRun] Preparing simulation environment...
+[StartRun] Using configured environment.
+[StartRun] Environment pre-created with 5 motes, 2 gateways
+[StartRun] Starting simulation thread, isRunning=true
+[MainSim] Using pre-created environment from StartRunHandler
+[StopRun] Setting shouldStop=true
+[MainSim] Simulation loop ended, setting isRunning=false
+[ConfigureScenario] Received configuration. Mode: null
+[ConfigureScenario] numMotes: 6
+[ConfigureScenario] numGateways: 2
+[StartRun] Preparing simulation environment...
+[StartRun] Using configured environment.
+[StartRun] Environment pre-created with 6 motes, 2 gateways
+[StartRun] Starting simulation thread, isRunning=true
+[MainSim] Using pre-created environment from StartRunHandler
+[StopRun] Setting shouldStop=true
+[MainSim] Simulation loop ended, setting isRunning=false
+[ConfigureScenario] Received configuration. Mode: null
+[ConfigureScenario] numMotes: 4
+[ConfigureScenario] numGateways: 2
+[StartRun] Preparing simulation environment...
+[StartRun] Using configured environment.
+[StartRun] Environment pre-created with 4 motes, 2 gateways
+[StartRun] Starting simulation thread, isRunning=true
+[MainSim] Using pre-created environment from StartRunHandler
+[StopRun] Setting shouldStop=true
+[MainSim] Simulation loop ended, setting isRunning=false
+[ConfigureScenario] Received configuration. Mode: null
+[ConfigureScenario] numMotes: 6
+[ConfigureScenario] numGateways: 2
+[StartRun] Preparing simulation environment...
+[StartRun] Using configured environment.
+[StartRun] Environment pre-created with 6 motes, 2 gateways
+[StartRun] Starting simulation thread, isRunning=true
+[MainSim] Using pre-created environment from StartRunHandler
+[StopRun] Setting shouldStop=true
+[MainSim] Simulation loop ended, setting isRunning=false
+[ConfigureScenario] Received configuration. Mode: null
+[ConfigureScenario] numMotes: 3
+[ConfigureScenario] numGateways: 2
+[StartRun] Preparing simulation environment...
+[StartRun] Using configured environment.
+[StartRun] Environment pre-created with 3 motes, 2 gateways
+[StartRun] Starting simulation thread, isRunning=true
+[MainSim] Using pre-created environment from StartRunHandler
+[StopRun] Setting shouldStop=true
+[MainSim] Simulation loop ended, setting isRunning=false
+[ConfigureScenario] Received configuration. Mode: personalized
+[ConfigureScenario] numMotes: null
+[ConfigureScenario] numGateways: null
+[StartRun] Preparing simulation environment...
+[StartRun] Using configured environment.
+[StartRun] Environment pre-created with 2 motes, 1 gateways
+[StartRun] Starting simulation thread, isRunning=true
+[MainSim] Using pre-created environment from StartRunHandler
+[StopRun] Setting shouldStop=true
+[MainSim] Simulation loop ended, setting isRunning=false
+[ConfigureScenario] Received configuration. Mode: personalized
+[ConfigureScenario] numMotes: null
+[ConfigureScenario] numGateways: null
+[StartRun] Preparing simulation environment...
+[StartRun] Using configured environment.
+[StartRun] Environment pre-created with 1 motes, 1 gateways
+[StartRun] Starting simulation thread, isRunning=true
+[MainSim] Using pre-created environment from StartRunHandler
+[StopRun] Setting shouldStop=true
+[MainSim] Simulation loop ended, setting isRunning=false
+[ConfigureScenario] Received configuration. Mode: personalized
+[ConfigureScenario] numMotes: null
+[ConfigureScenario] numGateways: null
+[StartRun] Preparing simulation environment...
+[StartRun] Using configured environment.
+[StartRun] Environment pre-created with 1 motes, 1 gateways
+[StartRun] Starting simulation thread, isRunning=true
+[MainSim] Using pre-created environment from StartRunHandler
+[StopRun] Setting shouldStop=true
+[MainSim] Simulation loop ended, setting isRunning=false
+[ConfigureScenario] Received configuration. Mode: null
+[ConfigureScenario] numMotes: 4
+[ConfigureScenario] numGateways: 2
+[StartRun] Preparing simulation environment...
+[StartRun] Using configured environment.
+[StartRun] Environment pre-created with 4 motes, 2 gateways
+[StartRun] Starting simulation thread, isRunning=true
+[MainSim] Using pre-created environment from StartRunHandler
+[StopRun] Setting shouldStop=true
+[MainSim] Simulation loop ended, setting isRunning=false
+[ConfigureScenario] Received configuration. Mode: personalized
+[ConfigureScenario] numMotes: null
+[ConfigureScenario] numGateways: null
+[StartRun] Preparing simulation environment...
+[StartRun] Using configured environment.
+[StartRun] Environment pre-created with 1 motes, 1 gateways
+[StartRun] Starting simulation thread, isRunning=true
+[MainSim] Using pre-created environment from StartRunHandler
+[StopRun] Setting shouldStop=true
+[MainSim] Simulation loop ended, setting isRunning=false
+[ConfigureScenario] Received configuration. Mode: personalized
+[ConfigureScenario] numMotes: null
+[ConfigureScenario] numGateways: null
+[StartRun] Preparing simulation environment...
+[StartRun] Using configured environment.
+[StartRun] Environment pre-created with 1 motes, 1 gateways
+[StartRun] Starting simulation thread, isRunning=true
+[MainSim] Using pre-created environment from StartRunHandler
+[StopRun] Setting shouldStop=true
+[MainSim] Simulation loop ended, setting isRunning=false
+[ConfigureScenario] Received configuration. Mode: personalized
+[ConfigureScenario] numMotes: null
+[ConfigureScenario] numGateways: null
+[StartRun] Preparing simulation environment...
+[StartRun] Using configured environment.
+[StartRun] Environment pre-created with 1 motes, 1 gateways
+[StartRun] Starting simulation thread, isRunning=true
+[MainSim] Using pre-created environment from StartRunHandler
+[StopRun] Setting shouldStop=true
+[MainSim] Simulation loop ended, setting isRunning=false

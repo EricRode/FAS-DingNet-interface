@@ -21,6 +21,7 @@ import java.util.*;
 
 /**
  * This class provides the data and functionality of the main simulation.
+ * 
  * @version 1.0
  */
 public class MainSimulation extends Thread {
@@ -28,12 +29,15 @@ public class MainSimulation extends Thread {
 
     /**
      * The current environment of the simulation.
+     * 
      * @since 1.0
      */
     SimulationState simulationState;
 
     /**
-     * Constructs a {@code MainSimulation} object with the Environment {@code environment}.
+     * Constructs a {@code MainSimulation} object with the Environment
+     * {@code environment}.
+     * 
      * @param simulationState The environment of the {@code MainSimulation} object.
      * @since 1.0
      */
@@ -46,8 +50,10 @@ public class MainSimulation extends Thread {
          * Generate all the points
          */
         GeoPosition mapzero = new GeoPosition(50.853718, 4.673155);
-        Integer mapsize = (int) Math.ceil(1000 *Math.max(IotDomain.Environment.distance(50.853718, 4.673155, 50.878697,   4.673155), IotDomain.Environment.distance(50.853718, 4.673155, 50.853718,   4.701200)));
-        GeoPosition leuven = new GeoPosition(50,51,46,4,41,2);
+        Integer mapsize = (int) Math
+                .ceil(1000 * Math.max(IotDomain.Environment.distance(50.853718, 4.673155, 50.878697, 4.673155),
+                        IotDomain.Environment.distance(50.853718, 4.673155, 50.853718, 4.701200)));
+        GeoPosition leuven = new GeoPosition(50, 51, 46, 4, 41, 2);
         GeoPosition gw1 = new GeoPosition(50.859722, 4.681944);
         GeoPosition gw2 = new GeoPosition(50.863780, 4.677992);
         GeoPosition gw3 = new GeoPosition(50.867222, 4.678056);
@@ -80,8 +86,9 @@ public class MainSimulation extends Thread {
         /*
          * Create tracks.
          */
-        LinkedList<GeoPosition> track0 = new LinkedList<>(Arrays.asList(wp1,wp2,wp3,wp4,wp5,wp6,wp7,wp8,wp9,wp10,wp11,wp12,wp13,wp14,wp15,wp16,wp17));
-        LinkedList<GeoPosition> track2 = new LinkedList<>(Arrays.asList(wp21,wp22,wp23,wp24,wp25,wp1));
+        LinkedList<GeoPosition> track0 = new LinkedList<>(Arrays.asList(wp1, wp2, wp3, wp4, wp5, wp6, wp7, wp8, wp9,
+                wp10, wp11, wp12, wp13, wp14, wp15, wp16, wp17));
+        LinkedList<GeoPosition> track2 = new LinkedList<>(Arrays.asList(wp21, wp22, wp23, wp24, wp25, wp1));
 
         GeoPosition positionMote2 = new GeoPosition(50.862752, 4.688886);
 
@@ -89,157 +96,146 @@ public class MainSimulation extends Thread {
          * Prepare simulation environment.
          */
         Characteristic[][] map = new Characteristic[mapsize][mapsize];
-        for(int i =0; i < mapsize; i++){
-            for(int j =0; j < mapsize / 3 ; j++){
+        for (int i = 0; i < mapsize; i++) {
+            for (int j = 0; j < mapsize / 3; j++) {
                 map[j][i] = Characteristic.Forest;
             }
-            for(int j = mapsize / 3; j < 2 * mapsize / 3 ; j++){
+            for (int j = mapsize / 3; j < 2 * mapsize / 3; j++) {
                 map[j][i] = Characteristic.Plain;
             }
 
-            for(int j = 2 * mapsize / 3; j < mapsize ; j++){
+            for (int j = 2 * mapsize / 3; j < mapsize; j++) {
                 map[j][i] = Characteristic.City;
             }
         }
 
-        IotDomain.Environment environment = new IotDomain.Environment(map,mapzero,new LinkedHashSet<>());
+        IotDomain.Environment environment = new IotDomain.Environment(map, mapzero, new LinkedHashSet<>());
 
         /*
-        Add motes and gateways.
+         * Add motes and gateways.
          */
         Random random = new Random();
-        new Gateway(random.nextLong(),(int)Math.round(1000* IotDomain.Environment.distance(mapzero.getLatitude(),mapzero.getLongitude(),mapzero.getLatitude(), gw1.getLongitude())),
-                (int)Math.round(1000* IotDomain.Environment.distance(mapzero.getLatitude(),mapzero.getLongitude(),gw1.getLatitude(), mapzero.getLongitude())),
-                environment, 14,12);
-        new Gateway(random.nextLong(),(int)Math.round(1000* IotDomain.Environment.distance(mapzero.getLatitude(),mapzero.getLongitude(),mapzero.getLatitude(), gw2.getLongitude())),
-                (int)Math.round(1000* IotDomain.Environment.distance(mapzero.getLatitude(),mapzero.getLongitude(),gw2.getLatitude(), mapzero.getLongitude())),
-                environment, 14,12);
-        new Gateway(random.nextLong(),(int)Math.round(1000* IotDomain.Environment.distance(mapzero.getLatitude(),mapzero.getLongitude(),mapzero.getLatitude(), gw3.getLongitude())),
-                (int)Math.round(1000* IotDomain.Environment.distance(mapzero.getLatitude(),mapzero.getLongitude(),gw3.getLatitude(), mapzero.getLongitude())),
-                environment, 14,12);
-        new Gateway(random.nextLong(),(int)Math.round(1000* IotDomain.Environment.distance(mapzero.getLatitude(),mapzero.getLongitude(),mapzero.getLatitude(), gw4.getLongitude())),
-                (int)Math.round(1000* IotDomain.Environment.distance(mapzero.getLatitude(),mapzero.getLongitude(),gw4.getLatitude(), mapzero.getLongitude())),
-                environment, 14,12);
-
+        new Gateway(random.nextLong(),
+                (int) Math.round(1000 * IotDomain.Environment.distance(mapzero.getLatitude(), mapzero.getLongitude(),
+                        mapzero.getLatitude(), gw1.getLongitude())),
+                (int) Math.round(1000 * IotDomain.Environment.distance(mapzero.getLatitude(), mapzero.getLongitude(),
+                        gw1.getLatitude(), mapzero.getLongitude())),
+                environment, 14, 12);
+        new Gateway(random.nextLong(),
+                (int) Math.round(1000 * IotDomain.Environment.distance(mapzero.getLatitude(), mapzero.getLongitude(),
+                        mapzero.getLatitude(), gw2.getLongitude())),
+                (int) Math.round(1000 * IotDomain.Environment.distance(mapzero.getLatitude(), mapzero.getLongitude(),
+                        gw2.getLatitude(), mapzero.getLongitude())),
+                environment, 14, 12);
+        new Gateway(random.nextLong(),
+                (int) Math.round(1000 * IotDomain.Environment.distance(mapzero.getLatitude(), mapzero.getLongitude(),
+                        mapzero.getLatitude(), gw3.getLongitude())),
+                (int) Math.round(1000 * IotDomain.Environment.distance(mapzero.getLatitude(), mapzero.getLongitude(),
+                        gw3.getLatitude(), mapzero.getLongitude())),
+                environment, 14, 12);
+        new Gateway(random.nextLong(),
+                (int) Math.round(1000 * IotDomain.Environment.distance(mapzero.getLatitude(), mapzero.getLongitude(),
+                        mapzero.getLatitude(), gw4.getLongitude())),
+                (int) Math.round(1000 * IotDomain.Environment.distance(mapzero.getLatitude(), mapzero.getLongitude(),
+                        gw4.getLatitude(), mapzero.getLongitude())),
+                environment, 14, 12);
 
         /*
          * Mote 0
          */
         new Mote(random.nextLong(),
-                (int)Math.round(1000* IotDomain.Environment.distance(mapzero.getLatitude(),mapzero.getLongitude(),mapzero.getLatitude(), wp1.getLongitude())),
-                (int)Math.round(1000* IotDomain.Environment.distance(mapzero.getLatitude(),mapzero.getLongitude(),wp1.getLatitude(), mapzero.getLongitude())),
-                environment, 14,12, new LinkedList<>(),0, track0,10,0.5);
+                (int) Math.round(1000 * IotDomain.Environment.distance(mapzero.getLatitude(), mapzero.getLongitude(),
+                        mapzero.getLatitude(), wp1.getLongitude())),
+                (int) Math.round(1000 * IotDomain.Environment.distance(mapzero.getLatitude(), mapzero.getLongitude(),
+                        wp1.getLatitude(), mapzero.getLongitude())),
+                environment, 14, 12, new LinkedList<>(), 0, track0, 10, 0.5);
 
         /*
          * Mote 1
          */
-        new Mote(random.nextLong(),toMapXCoordinate(wp21,mapzero),
-                toMapYCoordinate(wp21,mapzero),
-                environment, 14,12, new LinkedList<>(),0, new LinkedList<>(),10,0.5);
+        new Mote(random.nextLong(), toMapXCoordinate(wp21, mapzero),
+                toMapYCoordinate(wp21, mapzero),
+                environment, 14, 12, new LinkedList<>(), 0, new LinkedList<>(), 10, 0.5);
 
         /*
          * Mote 2
          */
         new Mote(random.nextLong(),
-                (int)Math.round(1000* IotDomain.Environment.distance(mapzero.getLatitude(),mapzero.getLongitude(),mapzero.getLatitude(), positionMote2.getLongitude())),
-                (int)Math.round(1000* IotDomain.Environment.distance(mapzero.getLatitude(),mapzero.getLongitude(),positionMote2.getLatitude(), mapzero.getLongitude())),
-                environment, 14,12, new LinkedList<>(),0, track2,10,0.5);
+                (int) Math.round(1000 * IotDomain.Environment.distance(mapzero.getLatitude(), mapzero.getLongitude(),
+                        mapzero.getLatitude(), positionMote2.getLongitude())),
+                (int) Math.round(1000 * IotDomain.Environment.distance(mapzero.getLatitude(), mapzero.getLongitude(),
+                        positionMote2.getLatitude(), mapzero.getLongitude())),
+                environment, 14, 12, new LinkedList<>(), 0, track2, 10, 0.5);
 
         return environment;
     }
 
     /**
-     * Starts a DingNet simulation with three motes and four gateways. Two motes are moved along different paths.
+     * Starts a DingNet simulation with three motes and four gateways. Two motes are
+     * moved along different paths.
      * The simulation state is updated regularly.
+     * 
      * @exception InterruptedException can occur in {@link Thread#sleep(long)}
      * @since 1.0
      */
     public void runSimulation(boolean visualizeResults) throws InterruptedException {
-        /*
-        Set to enable or disable adaptation of node 0 (D1).
-         */
-        Boolean adaption = false;
+        Environment environment;
+        if (this.simulationState.getEnvironment() != null) {
+            System.out.println("[MainSim] Using pre-created environment from StartRunHandler");
+            environment = this.simulationState.getEnvironment();
+        } else {
+            System.out.println("[MainSim] Creating new environment (fallback)");
+            environment = ScenarioFactory.createEnvironment(new models.ScenarioConfig());
+            this.simulationState.setEnvironment(environment);
+        }
 
-        Environment environment = createEnvironment();
+        // Initialize counters and path indices for all motes
+        Map<Mote, Integer> samplingCounters = new HashMap<>();
+        Map<Mote, Integer> pathIndices = new HashMap<>();
 
-        /*
-         Get the motes.
-         */
-        Mote mote0 = environment.getMotes().get(0);
-        Mote mote1 = environment.getMotes().get(1);
-        Mote mote2 = environment.getMotes().get(2);
+        for (Mote mote : environment.getMotes()) {
+            // Use startOffset if defined, otherwise samplingRate
+            int initialCounter = (mote.getStartOffset() != null && mote.getStartOffset() > 0)
+                    ? mote.getStartOffset()
+                    : mote.getSamplingRate();
+            samplingCounters.put(mote, initialCounter);
+            pathIndices.put(mote, 0);
+        }
 
-        LinkedList<GeoPosition> track0 = mote0.getPath();
-        LinkedList<GeoPosition> track2 = mote2.getPath();
-
-        this.simulationState.setEnvironment(environment);
-
-        /*
-         Actual simulation
-         */
-        Random random = new Random();
-        LinkedList<Integer> powerSetting0 = new LinkedList<>();
-        LinkedList<LoraTransmission> highestPower0 = new LinkedList<>();
-        int mote0Counter = mote0.getSamplingRate() - 1;
-        int mote1Counter = mote1.getSamplingRate() - 1;
-        Integer mote2counter = random.nextInt(15)+1;
-        LinkedList<Integer> indexesMote2 = new LinkedList<>();
-        indexesMote2.add(mote2counter);
-        int trackPosition0 = 0;
-        int trackPosition2 = 0;
         GeoPosition mapzero = environment.getMapCenter();
 
-        while(!simulationState.getShouldStop()) {
-            // Update the position of mote0
-            if(moveMote(track0.get(trackPosition0 % track0.size()), mote0, mapzero)){
-                if(mote0Counter == 0) {
-                    mote0.sendToGateWay(new Byte[0], new HashMap<>());
-                    if(adaption){
-                        powerSetting0.add(mote0.getTransmissionPower());
-                        highestPower0.add(naiveAdaptionAlgorithm(mote0));
+        while (!simulationState.getShouldStop()) {
+            for (Mote mote : environment.getMotes()) {
+                // 1. Handle Movement
+                if (mote.getPath() != null && !mote.getPath().isEmpty()) {
+                    int pathIndex = pathIndices.getOrDefault(mote, 0);
+                    GeoPosition target = mote.getPath().get(pathIndex % mote.getPath().size());
+
+                    // moveMote returns true if moved, false if reached target (or didn't move)
+                    if (!moveMote(target, mote, mapzero)) {
+                        // Reached target, move to next waypoint
+                        pathIndices.put(mote, pathIndex + 1);
                     }
-
-                    updateMoteStatistics(mote0, environment);
-                    mote0Counter = mote0.getSamplingRate() - 1;
                 }
-                else
-                    mote0Counter --;
-                // Mote didn't move, reached a waypoint
-            } else {
-                trackPosition0++;
-            }
 
-            if (mote1Counter == 0) {
-                mote1.sendToGateWay(new Byte[0], new HashMap<>());
-
-                updateMoteStatistics(mote1, environment);
-
-                mote1Counter = mote1.getSamplingRate() - 1;
-            } else {
-                mote1Counter--;
-            }
-
-            // Update the position of mote2
-            if (moveMote(track2.get(trackPosition2 % track2.size()), mote2, mapzero)) {
-                if (mote2counter == 0) {
-                    mote2.sendToGateWay(new Byte[0], new HashMap<>());
-
-                    updateMoteStatistics(mote2, environment);
-
-                    mote2counter = random.nextInt(15) + 1;
-                    indexesMote2.add(indexesMote2.getLast() + mote2counter);
-                } else
-                    mote2counter--;
-                // Mote didn't move, reached a waypoint
-            } else {
-                trackPosition2++;
+                // 2. Handle Transmission
+                int counter = samplingCounters.getOrDefault(mote, mote.getSamplingRate());
+                if (counter <= 0) {
+                    mote.sendToGateWay(new Byte[0], new HashMap<>());
+                    updateMoteStatistics(mote, environment);
+                    samplingCounters.put(mote, mote.getSamplingRate());
+                } else {
+                    samplingCounters.put(mote, counter - 1);
+                }
             }
 
             environment.tick(1500);
         }
+        System.out.println("[MainSim] Simulation loop ended, setting isRunning=false");
 
-        if (visualizeResults)
-            showCharts(environment, indexesMote2);
+        if (visualizeResults) {
+            // showCharts(environment, indexesMote2); // Disabled legacy charts for now
+        }
     }
 
     private void updateMoteStatistics(Mote mote, Environment environment) {
@@ -255,12 +251,14 @@ public class MainSimulation extends Thread {
         LinkedList<LinkedList<LoraTransmission>> transmissionsMote0 = new LinkedList<>();
         int transmittedPacketsMote0 = 0;
         int lostPacketsMote0 = 0;
-        for(Gateway gateway : environment.getGateways()){
+        for (Gateway gateway : environment.getGateways()) {
             transmissionsMote0.add(new LinkedList<>());
-            for(LoraTransmission transmission :gateway.getAllReceivedTransmissions(gateway.getEnvironment().getNumberOfRuns()-1).keySet()){
-                if(transmission.getSender() == environment.getMotes().get(0)) {
+            for (LoraTransmission transmission : gateway
+                    .getAllReceivedTransmissions(gateway.getEnvironment().getNumberOfRuns() - 1).keySet()) {
+                if (transmission.getSender() == environment.getMotes().get(0)) {
                     transmittedPacketsMote0++;
-                    if (!gateway.getAllReceivedTransmissions(gateway.getEnvironment().getNumberOfRuns()-1).get(transmission))
+                    if (!gateway.getAllReceivedTransmissions(gateway.getEnvironment().getNumberOfRuns() - 1)
+                            .get(transmission))
                         transmissionsMote0.getLast().add(transmission);
                     else {
                         transmissionsMote0.getLast().add(new LoraTransmission(transmission.getSender(),
@@ -273,21 +271,23 @@ public class MainSimulation extends Thread {
         }
 
         /*
-       Data collection mote 2
-        */
+         * Data collection mote 2
+         */
         LinkedList<LinkedList<LoraTransmission>> transmissionsMote2 = new LinkedList<>();
 
         int transmittedPacketsMote2 = 0;
         int lostPacketsMote2 = 0;
-        for(Gateway gateway : environment.getGateways()){
+        for (Gateway gateway : environment.getGateways()) {
             transmissionsMote2.add(new LinkedList<>());
-            for(LoraTransmission transmission :gateway.getAllReceivedTransmissions(gateway.getEnvironment().getNumberOfRuns()-1).keySet()){
-                if(transmission.getSender() == environment.getMotes().get(2)) {
-                    transmittedPacketsMote2 ++;
-                    if (!gateway.getAllReceivedTransmissions(gateway.getEnvironment().getNumberOfRuns()-1).get(transmission))
+            for (LoraTransmission transmission : gateway
+                    .getAllReceivedTransmissions(gateway.getEnvironment().getNumberOfRuns() - 1).keySet()) {
+                if (transmission.getSender() == environment.getMotes().get(2)) {
+                    transmittedPacketsMote2++;
+                    if (!gateway.getAllReceivedTransmissions(gateway.getEnvironment().getNumberOfRuns() - 1)
+                            .get(transmission))
                         transmissionsMote2.getLast().add(transmission);
                     else {
-                        lostPacketsMote2 ++;
+                        lostPacketsMote2++;
                         transmissionsMote2.getLast().add(new LoraTransmission(transmission.getSender(),
                                 transmission.getReceiver(), -10, transmission.getBandwidth(),
                                 transmission.getSpreadingFactor(), transmission.getContent()));
@@ -305,22 +305,22 @@ public class MainSimulation extends Thread {
          * Creating charts
          */
         XYSeriesCollection dataMote0 = new XYSeriesCollection();
-        for(LinkedList<LoraTransmission> list : transmissionsMote0){
+        for (LinkedList<LoraTransmission> list : transmissionsMote0) {
             XYSeries series = new XYSeries(list.get(0).getReceiver().toString());
             Integer i = 0;
-            for (LoraTransmission transmission: list){
-                series.add(i,(Number)transmission.getTransmissionPower());
-                i = i +10;
+            for (LoraTransmission transmission : list) {
+                series.add(i, (Number) transmission.getTransmissionPower());
+                i = i + 10;
             }
             dataMote0.addSeries(series);
         }
 
         XYSeriesCollection dataMote2 = new XYSeriesCollection();
-        for(LinkedList<LoraTransmission> list: transmissionsMote2){
+        for (LinkedList<LoraTransmission> list : transmissionsMote2) {
             XYSeries series = new XYSeries(list.get(0).getReceiver().toString());
             int i = 0;
-            for (LoraTransmission transmission: list){
-                series.add(indexesMote2.get(i),(Number)transmission.getTransmissionPower());
+            for (LoraTransmission transmission : list) {
+                series.add(indexesMote2.get(i), (Number) transmission.getTransmissionPower());
                 i++;
             }
             dataMote2.addSeries(series);
@@ -374,14 +374,17 @@ public class MainSimulation extends Thread {
         frame1.getContentPane().add(HighestSignalChartpanel, BorderLayout.NORTH);
         ChartPanel powersettingChart1panel = new ChartPanel(receivedPowerChartMote2);
         powersettingChart1panel.setPreferredSize(new java.awt.Dimension(1000, 500));
-        frame1.getContentPane().add( powersettingChart1panel, BorderLayout.SOUTH);
+        frame1.getContentPane().add(powersettingChart1panel, BorderLayout.SOUTH);
         frame1.pack();
         frame1.setVisible(true);
     }
 
     /**
-     * Runs the simulation and sets the {@code isRunning} flag of the simulation state to {@code false} again.
-     * @exception RuntimeException can occur in {@link MainSimulation#runSimulation(boolean)}
+     * Runs the simulation and sets the {@code isRunning} flag of the simulation
+     * state to {@code false} again.
+     * 
+     * @exception RuntimeException can occur in
+     *                             {@link MainSimulation#runSimulation(boolean)}
      * @since 1.0
      */
     public void run() {
@@ -394,39 +397,43 @@ public class MainSimulation extends Thread {
     }
 
     /*
-    The naïve adaptation for our paper
+     * The naïve adaptation for our paper
      */
     private static LinkedList<Double> algorithmBuffer = new LinkedList<>();
-    private static LoraTransmission naiveAdaptionAlgorithm(Mote mote){
+
+    private static LoraTransmission naiveAdaptionAlgorithm(Mote mote) {
         LinkedList<LoraTransmission> lastTransmissions = new LinkedList<>();
-        for(Gateway gateway :mote.getEnvironment().getGateways()){
+        for (Gateway gateway : mote.getEnvironment().getGateways()) {
             Boolean placed = false;
-            for(int i = gateway.getReceivedTransmissions(gateway.getEnvironment().getNumberOfRuns()-1).size()-1; i>=0 && !placed; i--) {
-                if(gateway.getReceivedTransmissions(gateway.getEnvironment().getNumberOfRuns()-1).get(i).getSender() == mote) {
-                    lastTransmissions.add(gateway.getReceivedTransmissions(gateway.getEnvironment().getNumberOfRuns()-1).get(i));
+            for (int i = gateway.getReceivedTransmissions(gateway.getEnvironment().getNumberOfRuns() - 1).size()
+                    - 1; i >= 0 && !placed; i--) {
+                if (gateway.getReceivedTransmissions(gateway.getEnvironment().getNumberOfRuns() - 1).get(i)
+                        .getSender() == mote) {
+                    lastTransmissions.add(
+                            gateway.getReceivedTransmissions(gateway.getEnvironment().getNumberOfRuns() - 1).get(i));
                     placed = true;
                 }
             }
         }
         LoraTransmission bestTransmission = lastTransmissions.getFirst();
-        for (LoraTransmission transmission : lastTransmissions){
-            if(transmission.getTransmissionPower() > bestTransmission.getTransmissionPower())
+        for (LoraTransmission transmission : lastTransmissions) {
+            if (transmission.getTransmissionPower() > bestTransmission.getTransmissionPower())
                 bestTransmission = transmission;
         }
         algorithmBuffer.add(bestTransmission.getTransmissionPower());
-        if(algorithmBuffer.size() ==5){
+        if (algorithmBuffer.size() == 5) {
             double average = 0;
-            for (Double power : algorithmBuffer){
-                average+= power;
+            for (Double power : algorithmBuffer) {
+                average += power;
             }
-            average = average /5;
-            if(average > -42) {
+            average = average / 5;
+            if (average > -42) {
                 if (mote.getTransmissionPower() > -3)
                     mote.setTransmissionPower(mote.getTransmissionPower() - 1);
             }
-            if(average < -48){
-                if(mote.getTransmissionPower() < 14)
-                    mote.setTransmissionPower(mote.getTransmissionPower() +1);
+            if (average < -48) {
+                if (mote.getTransmissionPower() < 14)
+                    mote.setTransmissionPower(mote.getTransmissionPower() + 1);
             }
             algorithmBuffer = new LinkedList<>();
         }
@@ -434,19 +441,21 @@ public class MainSimulation extends Thread {
     }
 
     /**
-     * A function that moves a mote to a geoposition 1 step and returns if the note has moved.
+     * A function that moves a mote to a geoposition 1 step and returns if the note
+     * has moved.
+     * 
      * @param position
      * @param mote
      * @param mapzero
      * @return If the node has moved
      */
-    private static Boolean moveMote(GeoPosition position, Mote mote, GeoPosition mapzero){
+    private static Boolean moveMote(GeoPosition position, Mote mote, GeoPosition mapzero) {
         Integer xPos = toMapXCoordinate(position, mapzero);
         Integer yPos = toMapYCoordinate(position, mapzero);
-        if(Integer.signum(xPos - mote.getXPos()) != 0 || Integer.signum(yPos - mote.getYPos()) != 0){
-            if(Math.abs(mote.getXPos() - xPos) >= Math.abs(mote.getYPos() - yPos)){
+        if (Integer.signum(xPos - mote.getXPos()) != 0 || Integer.signum(yPos - mote.getYPos()) != 0) {
+            if (Math.abs(mote.getXPos() - xPos) >= Math.abs(mote.getYPos() - yPos)) {
                 mote.setXPos(mote.getXPos() + Integer.signum(xPos - mote.getXPos()));
-            }  else {
+            } else {
                 mote.setYPos(mote.getYPos() + Integer.signum(yPos - mote.getYPos()));
             }
             return true;
@@ -454,12 +463,14 @@ public class MainSimulation extends Thread {
         return false;
     }
 
-    private static Integer toMapXCoordinate(GeoPosition geoPosition, GeoPosition mapzero){
-        return (int)Math.round(1000* IotDomain.Environment.distance(mapzero.getLatitude(),mapzero.getLongitude(),mapzero.getLatitude(), geoPosition.getLongitude()));
+    private static Integer toMapXCoordinate(GeoPosition geoPosition, GeoPosition mapzero) {
+        return (int) Math.round(1000 * IotDomain.Environment.distance(mapzero.getLatitude(), mapzero.getLongitude(),
+                mapzero.getLatitude(), geoPosition.getLongitude()));
     }
 
-    private static Integer toMapYCoordinate(GeoPosition geoPosition, GeoPosition mapzero){
-        return (int)Math.round(1000* IotDomain.Environment.distance(mapzero.getLatitude(),mapzero.getLongitude(),geoPosition.getLatitude(), mapzero.getLongitude()));
+    private static Integer toMapYCoordinate(GeoPosition geoPosition, GeoPosition mapzero) {
+        return (int) Math.round(1000 * IotDomain.Environment.distance(mapzero.getLatitude(), mapzero.getLongitude(),
+                geoPosition.getLatitude(), mapzero.getLongitude()));
     }
 
     public static void main(String[] args) throws InterruptedException {
