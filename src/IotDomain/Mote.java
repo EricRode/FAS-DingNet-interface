@@ -358,31 +358,29 @@ public class Mote extends NetworkEntity {
     }
 
     public Double calculatePacketLoss(Integer run) {
-        int receivedPackets = 0;
-
-        if (numberOfSentPackets == 0) {
+        if (run == null || getEnvironment() == null) {
             return 0D;
         }
 
-        for (Gateway gateway : getEnvironment().getGateways()) {
-            for (LoraTransmission receivedTransmission : gateway.getReceivedTransmissions(run)) {
-                if (receivedTransmission.getSender() == this ) {
-                    receivedPackets++;
-                }
+        LinkedList<LoraTransmission> sentTransmissions = getSentTransmissions(run);
+        if (sentTransmissions == null || sentTransmissions.isEmpty()) {
+            numberOfLostPackets = 0;
+            return 0D;
+        }
+
+        List<Map<LoraTransmission, Boolean>> receivedTransmissionMaps = collectReceivedTransmissionMaps(run);
+
+        int successfulPackets = 0;
+        for (LoraTransmission transmission : sentTransmissions) {
+            if (wasSuccessfullyReceived(transmission, receivedTransmissionMaps)) {
+                successfulPackets++;
             }
         }
 
-        for (Mote mote : getEnvironment().getMotes()) {
-            for (LoraTransmission receivedTransmission : mote.getReceivedTransmissions(run)) {
-                if (receivedTransmission.getSender() == this ) {
-                    receivedPackets++;
-                }
-            }
-        }
+        int sentPacketCount = sentTransmissions.size();
+        numberOfLostPackets = Math.max(0, sentPacketCount - successfulPackets);
 
-        this.numberOfLostPackets = numberOfSentPackets - receivedPackets;
-
-        return (numberOfSentPackets - receivedPackets) / (double) numberOfSentPackets;
+        return numberOfLostPackets / (double) sentPacketCount;
     }
 
     /**

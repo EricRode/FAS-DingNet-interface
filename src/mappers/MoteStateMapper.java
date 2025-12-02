@@ -29,10 +29,8 @@ public class MoteStateMapper {
             shortestDistanceToGateway = moteProbe.getShortestDistanceToGateway(mote);
         }
 
-        Double highestReceivedSignal = mote.getHighestReceivedSignal();
-        if (highestReceivedSignal == null) {
-            highestReceivedSignal = moteProbe.getHighestReceivedSignal(mote);
-        }
+        Double highestReceivedSignal = moteProbe.getHighestReceivedSignal(mote);
+        mote.setHighestReceivedSignal(highestReceivedSignal);
 
         Double packetLoss = mote.getPacketLoss();
         Double recentPacketLoss = null;
