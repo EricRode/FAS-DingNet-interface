@@ -64,15 +64,21 @@ public class MoteProbe {
 
         Double highestSignal = null;
         for (Gateway gateway : mote.getEnvironment().getGateways()) {
-            if (gateway.getAllReceivedTransmissions(runIndex) == null) {
+            Map<LoraTransmission, Boolean> received = gateway.getAllReceivedTransmissions(runIndex);
+            if (received == null || received.isEmpty()) {
                 continue;
             }
 
-            for (Map.Entry<LoraTransmission, Boolean> receivedEntry : gateway.getAllReceivedTransmissions(runIndex).entrySet()) {
+            for (Map.Entry<LoraTransmission, Boolean> receivedEntry : received.entrySet()) {
+                if (Boolean.TRUE.equals(receivedEntry.getValue())) {
+                    continue; // skip collided receptions
+                }
+
                 LoraTransmission transmission = receivedEntry.getKey();
                 if (transmission != null && transmission.getSender() == mote) {
-                    if (highestSignal == null || transmission.getTransmissionPower() > highestSignal) {
-                        highestSignal = transmission.getTransmissionPower();
+                    Double receivedPower = transmission.getTransmissionPower();
+                    if (highestSignal == null || (receivedPower != null && receivedPower > highestSignal)) {
+                        highestSignal = receivedPower;
                     }
                 }
             }
