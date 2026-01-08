@@ -7,6 +7,7 @@ import IotDomain.NetworkEntity;
 import SelfAdaptation.FeedbackLoop.GenericFeedbackLoop;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * A class representing methods for probing.
@@ -47,32 +48,43 @@ public class MoteProbe {
      * Returns {@code null} if there have not been any transmissions and thus the signal cannot be calculated.
      */
     public Double getHighestReceivedSignal(Mote mote) {
-        if (mote.getSentTransmissions(mote.getEnvironment().getNumberOfRuns() - 1).isEmpty()) {
+        if (mote == null || mote.getEnvironment() == null) {
             return null;
         }
 
-        LinkedList<LoraTransmission> lastTransmissions = new LinkedList<>();
+        Integer numberOfRuns = mote.getEnvironment().getNumberOfRuns();
+        if (numberOfRuns == null || numberOfRuns <= 0) {
+            return null;
+        }
+
+        Integer runIndex = numberOfRuns - 1;
+        if (mote.getSentTransmissions(runIndex).isEmpty()) {
+            return null;
+        }
+
+        Double highestSignal = null;
         for (Gateway gateway : mote.getEnvironment().getGateways()) {
-            for (int i = gateway.getReceivedTransmissions(mote.getEnvironment().getNumberOfRuns()-1).size() - 1; i >= 0; i--) {
-                if (gateway.getReceivedTransmissions(mote.getEnvironment().getNumberOfRuns()-1).get(i).getSender() == mote) {
-                    lastTransmissions.add(gateway.getReceivedTransmissions(mote.getEnvironment().getNumberOfRuns()-1).get(i));
-                    break;
+            Map<LoraTransmission, Boolean> received = gateway.getAllReceivedTransmissions(runIndex);
+            if (received == null || received.isEmpty()) {
+                continue;
+            }
+
+            for (Map.Entry<LoraTransmission, Boolean> receivedEntry : received.entrySet()) {
+                if (Boolean.TRUE.equals(receivedEntry.getValue())) {
+                    continue; // skip collided receptions
+                }
+
+                LoraTransmission transmission = receivedEntry.getKey();
+                if (transmission != null && transmission.getSender() == mote) {
+                    Double receivedPower = transmission.getTransmissionPower();
+                    if (highestSignal == null || (receivedPower != null && receivedPower > highestSignal)) {
+                        highestSignal = receivedPower;
+                    }
                 }
             }
         }
 
-        // No transmissions, highest received signal cannot be calculated
-        if (lastTransmissions.isEmpty()) {
-            return null;
-        }
-
-        LoraTransmission bestTransmission = lastTransmissions.getFirst();
-        for (LoraTransmission transmission : lastTransmissions) {
-            if (transmission.getTransmissionPower() > bestTransmission.getTransmissionPower())
-                bestTransmission = transmission;
-        }
-
-        return bestTransmission.getTransmissionPower();
+        return highestSignal;
     }
 
     /**
